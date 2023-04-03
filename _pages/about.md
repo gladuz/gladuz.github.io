@@ -6,7 +6,7 @@ subtitle: <a href="https://en.knu.ac.kr">Kyungpook National University<a> and <a
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: avatar.jpg
   image_circular: false # crops the image to make it circular
   address: 
 
