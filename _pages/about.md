@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: <a href="https://en.knu.ac.kr">Kyungpook National University<a> and <a href="https://sites.google.com/view/jmkang">CVLT Lab</a> Address. Contacts. Moto. Etc.
 
 profile:
   align: right
@@ -15,7 +15,7 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-I am currently a PhD student at [Kyungpook National University](https://en.knu.ac.kr) advised by [Dr. Jae-Mo Kang](https://sites.google.com/site/knuaislab/professor) [Computer Vision & Learning Theory LAB](https://sites.google.com/site/knuaislab)
+I am currently a PhD student at [Kyungpook National University](https://en.knu.ac.kr) advised by [Dr. Jae-Mo Kang](https://sites.google.com/site/knuaislab/professor) [Computer Vision & Learning Theory LAB](https://sites.google.com/view/jmkang)
 <br><br>
 
 My primary research interests are deep learning, federated learning and computer vision. My current research work focuses on federated learning and its application in wireless IoT settings.
