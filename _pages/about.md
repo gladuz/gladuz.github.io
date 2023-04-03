@@ -2,8 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href="https://en.knu.ac.kr">Kyungpook National University<a> and <a href="https://sites.google.com/view/jmkang">CVLT Lab</a> Address. Contacts. Moto. Etc.
-
+subtitle: <a href="https://en.knu.ac.kr">Kyungpook National University<a> and <a href="https://sites.google.com/view/jmkang">CVLT Lab</a>
 profile:
   align: right
   image: avatar.jpg
