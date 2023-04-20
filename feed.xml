@@ -1,2 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-04-03T15:21:49+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
-</subtitle></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-04-20T14:35:16+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
+</subtitle><entry><title type="html">Hungarian matching algorithm in DETR</title><link href="https://tursunboev.com/blog/2023/hungarian-matching-detr/" rel="alternate" type="text/html" title="Hungarian matching algorithm in DETR" /><published>2023-04-20T00:00:00+00:00</published><updated>2023-04-20T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/hungarian-matching-detr</id><content type="html" xml:base="https://tursunboev.com/blog/2023/hungarian-matching-detr/"><![CDATA[<h1 id="introduction">Introduction</h1>
+<p>In the <a href="https://arxiv.org/abs/2005.12872">End-to-End Object Detection with Transformers</a> paper, they directly predict \(N\) number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use <em>Hungarian matching</em> algorithm. There is a <a href="https://leimao.github.io/blog/Hungarian-Matching-Algorithm/">great blogpost by Lei Mao</a> explaining the basic concepts of Hungarian matching algorithm.</p>
+
+<h1 id="short-summary-of-the-problem">Short summary of the problem</h1>
+<p>In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select \(n\) best prediction boxes among the \(m\) outputs.</p>
+
+<p>To do this, we form a cost matrix \(C\) with the size \(m \times n\) , where \(m\) is the number of predictions and \(n\) is the number of targets where \(m &gt; n\) . \(C_{i,j}\) would be the matching cost of prediction \(i\) and ground truth box \(j\) .</p>
+
+<h1 id="matching-cost">Matching cost</h1>
+<p>Matching cost of the element \(C_{ij}\) is given by:</p>
+
+\[\begin{equation}
+C_{ij} = \mathcal{L}_{iou}(b_i, \hat{b}_j) + ||b_i - \hat{b}_j||_1 - \hat{p}_j(c_i)
+\end{equation}\]
+
+<p>where \(\hat{p}_j(c_i)\) is the probability of the target class. 
+After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment">linar sum assignment</a> function from the SciPy package. It returns the <em>row_ids</em> and <em>column_ids</em> which corresponds to the (matched_predictions_ids, target_ids).</p>
+
+<h1 id="code">Code</h1>
+<p>Following is the simplified version of the Hungarian matching algorithm used in the <a href="https://github.com/facebookresearch/detr/blob/main/models/matcher.py">source code of DETR</a>.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">torch</span>
+<span class="kn">from</span> <span class="n">scipy.optimize</span> <span class="kn">import</span> <span class="n">linear_sum_assignment</span>
+
+<span class="n">target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># two target labels
+</span><span class="n">target_bboxes</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span> <span class="c1"># two target boxes
+</span>
+<span class="n">pred_logits</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># 10 predictions for 3 labels
+</span><span class="n">pred_bboxes</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="err"> </span><span class="c1"># 4 boxes for 10 predictions
+</span>
+<span class="n">class_cost</span> <span class="o">=</span> <span class="o">-</span><span class="n">pred_logits</span><span class="p">[:,</span> <span class="n">target_labels</span><span class="p">]</span> <span class="c1"># 10x2
+# We can use torch.cdist which returns the norm distance matrix 10x2
+</span><span class="n">l1_cost</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">cdist</span><span class="p">(</span><span class="n">pred_bboxes</span><span class="p">,</span> <span class="n">target_bboxes</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 10x2
+# To simplify we omit the IoU calculation. Look at https://github.com/facebookresearch/detr/blob/3af9fa878e73b6894ce3596450a8d9b89d918ca9/models/matcher.py#L74
+</span><span class="n">iou_cost</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># 10x2
+</span>
+<span class="n">cost_matrix</span> <span class="o">=</span> <span class="n">class_cost</span> <span class="o">+</span> <span class="n">l1_cost</span> <span class="o">+</span> <span class="n">iou_cost</span>
+<span class="n">match_preds</span><span class="p">,</span> <span class="n">match_targets</span> <span class="o">=</span> <span class="nf">linear_sum_assignment</span><span class="p">(</span><span class="n">cost_matrix</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">match_preds</span><span class="p">,</span> <span class="n">match_targets</span><span class="p">)</span>
+<span class="c1">#[2 9] [0 1]
+</span></code></pre></div></div>
+<p>In this example, predictions \(2,9\) matched with \(0,1\) target boxes, respecitvely : (2&lt;-&gt;0), (9&lt;-&gt;1)</p>]]></content><author><name></name></author><category term="deep-learning," /><category term="paper-note" /><summary type="html"><![CDATA[Explaining Hungarian matching algorithm used in DETR with a small example]]></summary></entry></feed>
