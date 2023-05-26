@@ -10,10 +10,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>cv | Jamshid  Tursunboev</title>
+    <title>Few-shot image classification using Prototypical Networks | Jamshid  Tursunboev</title>
     <meta name="author" content="Jamshid  Tursunboev">
-    <meta name="description" content="Personal website of Jamshid Tursunboev
-">
+    <meta name="description" content="Basic implementation exampleof prototypical networks in Pytorch">
     <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website">
 
 
@@ -32,7 +31,7 @@
     <!-- Styles -->
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://tursunboev.com/cv/">
+    <link rel="canonical" href="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/">
     
     <!-- Dark Mode -->
     
@@ -71,16 +70,16 @@
               </li>
               
               <!-- Blog -->
-              <li class="nav-item ">
-                <a class="nav-link" href="/blog/">blog</a>
+              <li class="nav-item active">
+                <a class="nav-link" href="/blog/">blog<span class="sr-only">(current)</span></a>
               </li>
 
               <!-- Other pages -->
               <li class="nav-item ">
                 <a class="nav-link" href="/publications/">publications</a>
               </li>
-              <li class="nav-item active">
-                <a class="nav-link" href="/cv/">cv<span class="sr-only">(current)</span></a>
+              <li class="nav-item ">
+                <a class="nav-link" href="/cv/">cv</a>
               </li>
 
               <!-- Toogle theme mode -->
@@ -106,199 +105,103 @@
 
     <!-- Content -->
     <div class="container mt-5">
-      <!-- _layouts/cv.html -->
-        <div class="post">
+      <!-- _layouts/post.html -->
 
-          <header class="post-header">
-            <h1 class="post-title">cv <a href="/assets/pdf/example_pdf.pdf" target="_blank" rel="noopener noreferrer" class="float-right"><i class="fas fa-file-pdf"></i></a>
-</h1>
-            <p class="post-description"></p>
-          </header>
+<div class="post">
 
-          <article>
-            <div class="cv">
-              
-                <div class="card mt-3 p-3">
-                  <h3 class="card-title font-weight-medium">General Information</h3>
-                  <div>
-                  
-                    <table class="table table-sm table-borderless table-responsive">
-    
-      <tr>
-        <td class="p-1 pr-2 font-weight-bold"><b>Full Name</b></td>
-        <td class="p-1 pl-2 font-weight-light text">Jamshid Tursunboev</td>
-      </tr>
-    
-      <tr>
-        <td class="p-1 pr-2 font-weight-bold"><b>Date of Birth</b></td>
-        <td class="p-1 pl-2 font-weight-light text">11th December 1997</td>
-      </tr>
-    
-      <tr>
-        <td class="p-1 pr-2 font-weight-bold"><b>Languages</b></td>
-        <td class="p-1 pl-2 font-weight-light text">English, Uzbek, Russian</td>
-      </tr>
-    
-</table>
-                  
-                  </div>
-                </div>
-              
-                <div class="card mt-3 p-3">
-                  <h3 class="card-title font-weight-medium">Education</h3>
-                  <div>
-                  
-                   <ul class="card-text font-weight-light list-group list-group-flush">
-    
-      <li class="list-group-item">
-        <div class="row">
+  <header class="post-header">
+    <h1 class="post-title">Few-shot image classification using Prototypical Networks</h1>
+    <p class="post-meta">May 26, 2023</p>
+    <p class="post-tags">
+      <a href="/blog/2023"> <i class="fas fa-calendar fa-sm"></i> 2023 </a>
+        ·  
+        <a href="/blog/tag/deep-learning">
+          <i class="fas fa-hashtag fa-sm"></i> deep-learning,</a>  
+          <a href="/blog/tag/paper-note">
+          <i class="fas fa-hashtag fa-sm"></i> paper-note</a>  
           
-            <div class="col-xs-2 cl-sm-2 col-md-2 text-center" style="width: 75px;">
-              <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
-                2022
-              </span>
-            </div>
-          
-          <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
-            
-            <h6 class="title font-weight-bold ml-1 ml-md-4">M.S. in Artificial Intelligence</h6>
-            
-            
-            <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem;">Kyungpook National University, South Korea</h6>
-            
-            
-              <ul class="items">
-                
-                  <li>
-                    
-                      <span class="item">Advised by Jae-Mo Kang</span>
-                    
-                  </li>
-                
-              </ul>
-            
-            
-          </div>
-        </div>
-      </li>
-    
-      <li class="list-group-item">
-        <div class="row">
-          
-            <div class="col-xs-2 cl-sm-2 col-md-2 text-center" style="width: 75px;">
-              <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
-                2018
-              </span>
-            </div>
-          
-          <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
-            
-            <h6 class="title font-weight-bold ml-1 ml-md-4">B.S. in Informatice</h6>
-            
-            
-            <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem;">Gulistan State University, Uzbekistan</h6>
-            
-            
-            
-          </div>
-        </div>
-      </li>
-    
-    </ul>
-                  
-                  </div>
-                </div>
-              
-                <div class="card mt-3 p-3">
-                  <h3 class="card-title font-weight-medium">Experience</h3>
-                  <div>
-                  
-                   <ul class="card-text font-weight-light list-group list-group-flush">
-    
-      <li class="list-group-item">
-        <div class="row">
-          
-            <div class="col-xs-2 cl-sm-2 col-md-2 text-center" style="width: 75px;">
-              <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
-                2018-2020
-              </span>
-            </div>
-          
-          <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
-            
-            <h6 class="title font-weight-bold ml-1 ml-md-4">Software engineer</h6>
-            
-            
-            <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem;">Gulistan State University</h6>
-            
-            
-            
-          </div>
-        </div>
-      </li>
-    
-    </ul>
-                  
-                  </div>
-                </div>
-              
-                <div class="card mt-3 p-3">
-                  <h3 class="card-title font-weight-medium">Honors and Awards</h3>
-                  <div>
-                  
-                   <ul class="card-text font-weight-light list-group list-group-flush">
-    
-      <li class="list-group-item">
-        <div class="row">
-          
-            <div class="col-xs-2 cl-sm-2 col-md-2 text-center" style="width: 75px;">
-              <span class="badge font-weight-bold danger-color-dark text-uppercase align-middle" style="min-width: 75px;">
-                2017
-              </span>
-            </div>
-          
-          <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
-            
-            
-            
-            
-              <ul class="items">
-                
-                  <li>
-                    
-                      <span class="item">ACM ICPC semi-finalist</span>
-                    
-                  </li>
-                
-              </ul>
-            
-          </div>
-        </div>
-      </li>
-    
-    </ul>
-                  
-                  </div>
-                </div>
-              
-                <div class="card mt-3 p-3">
-                  <h3 class="card-title font-weight-medium">Other Interests</h3>
-                  <div>
-                  
-                    <ul class="card-text font-weight-light list-group list-group-flush">
-    
-      <li class="list-group-item">
-<u>Hobbies:</u> Coffee, Books</li>
-    
-</ul>
-                  
-                  </div>
-                </div>
-              
-              </div>
-          </article>
 
-        </div>
+    </p>
+  </header>
+
+  <article class="post-content">
+    <p>In few-shot image classification problem, \(K\) examples of \(N\) types of images are given as an “support” set and the task is to classify the new images by comparing them to those images.</p>
+<figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/protoypical-network-training-example-480.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/protoypical-network-training-example-800.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/protoypical-network-training-example-1400.webp"></source>
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/protoypical-network-training-example.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
+
+  </picture>
+
+</figure>
+
+<div class="caption">https://cs330.stanford.edu/lecture_slides/cs330_transfer_meta_learning.pdf</div>
+
+<p>One of the simplest methods is <a href="https://arxiv.org/abs/1703.05175" rel="external nofollow noopener" target="_blank">Prototypical Networks</a>. During training we feed both “support” and “query” images to the CNN encoder model. Then we take the center of each image class in “support set” and compare the distance of “query” (test) images. We assign the label of the closest center point (prototype) to each “query” image.</p>
+<figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/prototypical-network-clustering-example-480.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/prototypical-network-clustering-example-800.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/prototypical-network-clustering-example-1400.webp"></source>
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/prototypical-network-clustering-example.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
+
+  </picture>
+
+</figure>
+
+<div class="caption">https://arxiv.org/abs/1703.05175</div>
+
+<p>Nice property of this method is it acts the same in training and test time. It also don’t require any additional parameters for meta-training.</p>
+
+<p>Basic inner training procedure in Pytorch can be implemented follows: <a href="https://github.com/gladuz/Basic-Protonet-Implementation-Pytorch/blob/master/Working.ipynb" rel="external nofollow noopener" target="_blank">Jupyter notebook in Github</a></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#.... training loop
+</span>
+<span class="c1"># We have N types of images with K examples each for training and 1 for testing
+#For the image above we have K=5, N=3
+</span><span class="n">logits</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="c1">#BxK+1xNxD
+</span><span class="n">support_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># BxKxNxD
+</span><span class="n">query_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># Bx1xNxD 
+</span><span class="n">query_labels</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">N</span><span class="p">).</span><span class="nf">expand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">prototypes</span> <span class="o">=</span> <span class="n">support_logits</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#BxNxD
+</span><span class="n">query_dist</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nf">cdist</span><span class="p">(</span><span class="n">query_logits</span><span class="p">,</span> <span class="n">prototypes</span><span class="p">)</span> <span class="c1">#Negative distances (closer better)
+</span><span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">query_dist</span><span class="p">,</span> <span class="n">query_labels</span><span class="p">)</span>
+
+<span class="c1">#.... Backprop, accuracy etc.
+</span></code></pre></div></div>
+
+  </article>
+
+
+  
+    
+    <br>
+    <hr>
+    <br>
+    <ul class="list-disc pl-8"></ul>
+
+    <!-- Adds related posts to the end of an article -->
+    <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2>
+    <p class="mb-2">Here are some more articles you might like to read next:</p>
+  
+
+  <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/hungarian-matching-detr/">Hungarian matching algorithm in DETR</a>
+  </li>
+
+</div>
 
     </div>
 

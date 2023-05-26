@@ -1,5 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-04-20T14:35:16+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
-</subtitle><entry><title type="html">Hungarian matching algorithm in DETR</title><link href="https://tursunboev.com/blog/2023/hungarian-matching-detr/" rel="alternate" type="text/html" title="Hungarian matching algorithm in DETR" /><published>2023-04-20T00:00:00+00:00</published><updated>2023-04-20T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/hungarian-matching-detr</id><content type="html" xml:base="https://tursunboev.com/blog/2023/hungarian-matching-detr/"><![CDATA[<h1 id="introduction">Introduction</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-05-26T16:04:38+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
+</subtitle><entry><title type="html">Few-shot image classification using Prototypical Networks</title><link href="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/" rel="alternate" type="text/html" title="Few-shot image classification using Prototypical Networks" /><published>2023-05-26T00:00:00+00:00</published><updated>2023-05-26T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/prototipycal-networs-few-shot</id><content type="html" xml:base="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/"><![CDATA[<p>In few-shot image classification problem, \(K\) examples of \(N\) types of images are given as an “support” set and the task is to classify the new images by comparing them to those images.</p>
+<figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/protoypical-network-training-example-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/protoypical-network-training-example-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/protoypical-network-training-example-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/protoypical-network-training-example.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+<div class="caption">https://cs330.stanford.edu/lecture_slides/cs330_transfer_meta_learning.pdf</div>
+
+<p>One of the simplest methods is <a href="https://arxiv.org/abs/1703.05175">Prototypical Networks</a>. During training we feed both “support” and “query” images to the CNN encoder model. Then we take the center of each image class in “support set” and compare the distance of “query” (test) images. We assign the label of the closest center point (prototype) to each “query” image.</p>
+<figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/prototypical-network-clustering-example-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/prototypical-network-clustering-example-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/prototypical-network-clustering-example-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/prototypical-network-clustering-example.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+<div class="caption">https://arxiv.org/abs/1703.05175</div>
+
+<p>Nice property of this method is it acts the same in training and test time. It also don’t require any additional parameters for meta-training.</p>
+
+<p>Basic inner training procedure in Pytorch can be implemented follows: <a href="https://github.com/gladuz/Basic-Protonet-Implementation-Pytorch/blob/master/Working.ipynb">Jupyter notebook in Github</a></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#.... training loop
+</span>
+<span class="c1"># We have N types of images with K examples each for training and 1 for testing
+#For the image above we have K=5, N=3
+</span><span class="n">logits</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="c1">#BxK+1xNxD
+</span><span class="n">support_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># BxKxNxD
+</span><span class="n">query_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># Bx1xNxD 
+</span><span class="n">query_labels</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">N</span><span class="p">).</span><span class="nf">expand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">prototypes</span> <span class="o">=</span> <span class="n">support_logits</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#BxNxD
+</span><span class="n">query_dist</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nf">cdist</span><span class="p">(</span><span class="n">query_logits</span><span class="p">,</span> <span class="n">prototypes</span><span class="p">)</span> <span class="c1">#Negative distances (closer better)
+</span><span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">query_dist</span><span class="p">,</span> <span class="n">query_labels</span><span class="p">)</span>
+
+<span class="c1">#.... Backprop, accuracy etc.
+</span></code></pre></div></div>]]></content><author><name></name></author><category term="deep-learning," /><category term="paper-note" /><summary type="html"><![CDATA[Basic implementation exampleof prototypical networks in Pytorch]]></summary></entry><entry><title type="html">Hungarian matching algorithm in DETR</title><link href="https://tursunboev.com/blog/2023/hungarian-matching-detr/" rel="alternate" type="text/html" title="Hungarian matching algorithm in DETR" /><published>2023-04-20T00:00:00+00:00</published><updated>2023-04-20T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/hungarian-matching-detr</id><content type="html" xml:base="https://tursunboev.com/blog/2023/hungarian-matching-detr/"><![CDATA[<h1 id="introduction">Introduction</h1>
 <p>In the <a href="https://arxiv.org/abs/2005.12872">End-to-End Object Detection with Transformers</a> paper, they directly predict \(N\) number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use <em>Hungarian matching</em> algorithm. There is a <a href="https://leimao.github.io/blog/Hungarian-Matching-Algorithm/">great blogpost by Lei Mao</a> explaining the basic concepts of Hungarian matching algorithm.</p>
 
 <h1 id="short-summary-of-the-problem">Short summary of the problem</h1>
