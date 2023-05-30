@@ -131,6 +131,22 @@
     <p><strong>Paper link:</strong> <a href="https://arxiv.org/abs/2106.09685" rel="external nofollow noopener" target="_blank">https://arxiv.org/abs/2106.09685</a></p>
 
 <p>Instead of updating the pre-trained model weights \(W_0\) directly, low-rank decomposition matrices added \(W_0 + BA\) where \(B,A \in R^{d \times r}\)  and only \(BA\) is finetuned keeping \(W_0\) is frozen. After the training, they can be added to get final model.</p>
+<figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/lora-480.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/lora-800.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/lora-1400.webp"></source>
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/lora.png" class="img-fluid rounded z-depth-1 center" width="60%" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
+
+  </picture>
+
+</figure>
+
 <h1 id="advantages">Advantages</h1>
 <ul>
   <li>Large pre-trained model weights are not changed during fine-tuning.</li>
