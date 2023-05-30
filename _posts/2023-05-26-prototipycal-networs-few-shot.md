@@ -3,7 +3,7 @@ layout: post
 title: Few-shot image classification using Prototypical Networks
 date: 2023-05-26
 description: Basic implementation exampleof prototypical networks in Pytorch
-tags: deep-learning, paper-note
+tags: deep-learning paper-note
 #categories: 
 #related_posts: false
 ---

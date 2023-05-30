@@ -3,7 +3,7 @@ layout: post
 title: Hungarian matching algorithm in DETR
 date: 2023-04-20
 description: Explaining Hungarian matching algorithm used in DETR with a small example
-tags: deep-learning, paper-note
+tags: deep-learning paper-note
 #categories: 
 #related_posts: false
 ---
