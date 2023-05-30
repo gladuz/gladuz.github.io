@@ -10,6 +10,7 @@ tags: deep-learning paper-note transformers
 **Paper link:** [https://arxiv.org/abs/2106.09685](https://arxiv.org/abs/2106.09685)
 
 Instead of updating the pre-trained model weights $$W_0$$ directly, low-rank decomposition matrices added $$W_0 + BA$$ where $$B,A \in R^{d \times r}$$  and only $$BA$$ is finetuned keeping $$W_0$$ is frozen. After the training, they can be added to get final model.
+{% include figure.html path="assets/img/lora.png" title="example image" class="img-fluid rounded z-depth-1 center" width="60%"%}
 # Advantages
 - Large pre-trained model weights are not changed during fine-tuning. 
 - Inference is the same, $$Wx = W_0x + BAx = (W_0+BA)x$$
