@@ -4,8 +4,9 @@ title: Hungarian matching algorithm in DETR
 date: 2023-04-20
 description: Explaining Hungarian matching algorithm used in DETR with a small example
 tags: deep-learning paper-note
+giscus_comments: true
 #categories: 
-#related_posts: false
+related_posts: false
 ---
 
 

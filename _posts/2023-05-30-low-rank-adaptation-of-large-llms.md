@@ -4,6 +4,7 @@ title: "LoRA : Low-Rank Adaptation of Large Language Models"
 date: 2023-05-30
 description:
 tags: deep-learning paper-note transformers
+giscus_comments: true
 #categories: 
 #related_posts: false
 ---
