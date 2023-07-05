@@ -10,9 +10,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Few-shot image classification using Prototypical Networks | Jamshid  Tursunboev</title>
+    <title>ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review | Jamshid  Tursunboev</title>
     <meta name="author" content="Jamshid  Tursunboev">
-    <meta name="description" content="Basic implementation exampleof prototypical networks in Pytorch">
+    <meta name="description" content="Test-time adaptation introduction and review of the ActMAD paper">
     <meta name="keywords" content="jekyll, jekyll-theme, academic-website, portfolio-website">
 
 
@@ -31,7 +31,7 @@
     <!-- Styles -->
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/">
+    <link rel="canonical" href="https://tursunboev.com/blog/2023/actmad-activation-matching-tta/">
     
     <!-- Dark Mode -->
     
@@ -110,8 +110,8 @@
 <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Few-shot image classification using Prototypical Networks</h1>
-    <p class="post-meta">May 26, 2023</p>
+    <h1 class="post-title">ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review</h1>
+    <p class="post-meta">July 5, 2023</p>
     <p class="post-tags">
       <a href="/blog/2023"> <i class="fas fa-calendar fa-sm"></i> 2023 </a>
         ·  
@@ -119,68 +119,122 @@
           <i class="fas fa-hashtag fa-sm"></i> deep-learning</a>  
           <a href="/blog/tag/paper-note">
           <i class="fas fa-hashtag fa-sm"></i> paper-note</a>  
+          <a href="/blog/tag/tta">
+          <i class="fas fa-hashtag fa-sm"></i> tta</a>  
           
 
     </p>
   </header>
 
   <article class="post-content">
-    <p>In few-shot image classification problem, \(K\) examples of \(N\) types of images are given as an “support” set and the task is to classify the new images by comparing them to those images.</p>
+    <h1 id="test-time-adaptation">Test-time adaptation</h1>
+
+<p>Test-time adaptation is one of the emerging topics in tackling distribution shift in model deployment. Typically, the lifecycle of the model deployment includes followings:</p>
+<ol>
+  <li>(Pre)-Training the model on the training dataset offline.</li>
+  <li>Deploying the model in real world</li>
+  <li>After getting some more data, further retrain the model</li>
+  <li>Repeat 2,3 steps</li>
+</ol>
+
+<p>Some of the issues with the above steps are:</p>
+<ul>
+  <li>The environment might change during the deployment period, so the model might lose its performance over time. For example, model trained on the images of streets in clear weather will not work as well in fog or snow.</li>
+  <li>Retraining the model might require access to the original dataset, which we may have access to. E.g. ViT model trained on JFT-300M</li>
+  <li>Even if we only “adapt” the model using the acquired data, we still need to label them for training.</li>
+</ul>
+
+<p>Test time adaptation (TTA) techniques adapt the source model to the distribution of test data, during the testing phase. It will not require access to the source training data and only updates the model using the unlabeled test data.
+Also the test data is given in a stream, so we won’t even have access to the entire test dataset. Only the current batch of examples are used for adaptation. This actually matches the real-world deployment case, where the models lifetime includes different test distributions over time.</p>
 <figure>
 
   <picture>
     
-    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/protoypical-network-training-example-480.webp"></source>
-    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/protoypical-network-training-example-800.webp"></source>
-    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/protoypical-network-training-example-1400.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/20230706000002-480.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/20230706000002-800.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/20230706000002-1400.webp"></source>
     
 
     <!-- Fallback to the original file -->
-    <img src="/assets/img/protoypical-network-training-example.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
+    <img src="/assets/img/20230706000002.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
   </picture>
 
 </figure>
 
-<div class="caption">https://cs330.stanford.edu/lecture_slides/cs330_transfer_meta_learning.pdf</div>
+<div class="caption">https://arxiv.org/abs/2203.13591</div>
 
-<p>One of the simplest methods is <a href="https://arxiv.org/abs/1703.05175" rel="external nofollow noopener" target="_blank">Prototypical Networks</a>. During training we feed both “support” and “query” images to the CNN encoder model. Then we take the center of each image class in “support set” and compare the distance of “query” (test) images. We assign the label of the closest center point (prototype) to each “query” image.</p>
+<p>Most TTA techniques fall into one of the three categories:</p>
+<ul>
+  <li>
+<strong>Normalization based methods</strong>: (Only updating the parameters or statistics of the BatchNorm layer)</li>
+  <li>
+<strong>Entropy minimization</strong>: fine-tunes the model by minimizing the prediction entropy of the model</li>
+  <li>
+<strong>Prototype-based methods</strong>: Modifies the linear classifier so that it maps the input to the embedding space and trains it using the protype representations of each class for prediction.</li>
+</ul>
+
+<h1 id="actmad-activation-matching-to-align-distributions-for-test-time-training">ActMAD: Activation Matching to Align Distributions for Test-Time-Training</h1>
+
+<p>The problem with most of the existing methods is they have constraints on the type of the model and task. For example, normalization based methods mostly work on models with BatchNorm layers. Other methods use some kind of classification based loss for adapting the model.</p>
+
+<h2 id="proposed-solution">Proposed solution</h2>
+<p><a href="https://arxiv.org/abs/2211.12870" rel="external nofollow noopener" target="_blank"><strong>ActMAD</strong> paper</a> proposes a versatile TTA method which works on any model or task regardless of their design structure. It works by aligning the distribution of individual features across the network. Previous feature alignment techniques used the distribution feature maps as a group. <strong>ActMAD</strong> takes each individual feature vector and aligns it with the source model. Since the features have position awareness, it allows the network to adapt in fine-grained detail depending on the location of the object in interest. For example, roads are usually on the bottom of the image so the features on the bottom have different distribution than the feature on the top.</p>
+
+<h2 id="feature-alignmentactivation-matching">Feature alignment/activation matching</h2>
+<p>During the test phase we keep the original source model \(\theta^*\) and adapt our model \(\theta\) by taking the statistics of the activation outputs after the normalization layer.</p>
+
+<p>Let say the activation layer \(l\) ‘s output is \(a_l = norm(conv(a_{l-1}))\). Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have \(\hat{\mu_l}\) and \(\hat{\sigma_l}\) for each layer. In test time we compute the loss at layer \(l\) as:</p>
+
+\[\begin{equation} L_l(\theta) = |\mu_l - \hat{\mu}_l| + |\sigma^2_l - \hat{\sigma}^2_l| \end{equation}\]
+
+<p>Overall loss is simply the sum of all losses across the layers.</p>
 <figure>
 
   <picture>
     
-    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/prototypical-network-clustering-example-480.webp"></source>
-    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/prototypical-network-clustering-example-800.webp"></source>
-    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/prototypical-network-clustering-example-1400.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/20230706002758-480.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/20230706002758-800.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/20230706002758-1400.webp"></source>
     
 
     <!-- Fallback to the original file -->
-    <img src="/assets/img/prototypical-network-clustering-example.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
+    <img src="/assets/img/20230706002758.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
 
   </picture>
 
 </figure>
 
-<div class="caption">https://arxiv.org/abs/1703.05175</div>
+<div class="caption">https://arxiv.org/abs/2211.12870</div>
 
-<p>Nice property of this method is it acts the same in training and test time. It also don’t require any additional parameters for meta-training.</p>
+<h2 id="experimental-results">Experimental results</h2>
 
-<p>Basic inner training procedure in Pytorch can be implemented follows: <a href="https://github.com/gladuz/Basic-Protonet-Implementation-Pytorch/blob/master/Working.ipynb" rel="external nofollow noopener" target="_blank">Jupyter notebook in Github</a></p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#.... training loop
-</span>
-<span class="c1"># We have N types of images with K examples each for training and 1 for testing
-#For the image above we have K=5, N=3
-</span><span class="n">logits</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="c1">#BxK+1xNxD
-</span><span class="n">support_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># BxKxNxD
-</span><span class="n">query_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="c1"># Bx1xNxD 
-</span><span class="n">query_labels</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">arange</span><span class="p">(</span><span class="n">N</span><span class="p">).</span><span class="nf">expand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<p>The performance gain of <strong>ActMAD</strong> is the most significant in <a href="https://www.cvlibs.net/datasets/kitti/" rel="external nofollow noopener" target="_blank">KITTI dataset</a>  (~10 percent). It is likely because KITTI is constructed from the road images which is more structured that CIFAR or ImageNet. Also the proposed method can be combined with other entropy-based methods.</p>
+<figure>
 
-<span class="n">prototypes</span> <span class="o">=</span> <span class="n">support_logits</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#BxNxD
-</span><span class="n">query_dist</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nf">cdist</span><span class="p">(</span><span class="n">query_logits</span><span class="p">,</span> <span class="n">prototypes</span><span class="p">)</span> <span class="c1">#Negative distances (closer better)
-</span><span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">query_dist</span><span class="p">,</span> <span class="n">query_labels</span><span class="p">)</span>
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/20230706003759-480.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/20230706003759-800.webp"></source>
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/20230706003759-1400.webp"></source>
+    
 
-<span class="c1">#.... Backprop, accuracy etc.
-</span></code></pre></div></div>
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/20230706003759.png" class="img-fluid rounded z-depth-1" width="60%" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
+
+  </picture>
+
+</figure>
+
+<div class="caption">https://arxiv.org/abs/2211.12870</div>
+
+<p>One of the main advantages is it works in object detection and image segmentation tasks with any model, which most of the TTA methods do not consider. Usual datasets for comparison in TTA being CIFAR, ImageNet corruption or other classification tasks.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The proposed method takes different approach in TTA by being fully compatible with any task or architecture. It is especially great in data with location dependent structures: road images, selfies etc.
+One drawback is it requires the statistics of the activations from the source data which may not be available.</p>
+
 
   </article>
 
@@ -198,13 +252,13 @@
   
 
   <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/actmad-activation-matching-tta/">ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review</a>
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/low-rank-adaptation-of-large-llms/">LoRA : Low-Rank Adaptation of Large Language Models</a>
   </li>
 
   
 
   <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/low-rank-adaptation-of-large-llms/">LoRA : Low-Rank Adaptation of Large Language Models</a>
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/prototipycal-networs-few-shot/">Few-shot image classification using Prototypical Networks</a>
   </li>
 
   
