@@ -3,23 +3,21 @@ layout: post
 title: Hungarian matching algorithm in DETR
 date: 2023-04-20
 description: Explaining Hungarian matching algorithm used in DETR with a small example
-tags: deep-learning paper-note
+tags: deep-learning paper-notes
 giscus_comments: true
 #categories: 
 related_posts: false
 ---
-
-
 # Introduction
-In the [End-to-End Object Detection with Transformers](https://arxiv.org/abs/2005.12872) paper, they directly predict $$N$$ number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use *Hungarian matching* algorithm. There is a [great blogpost by Lei Mao](https://leimao.github.io/blog/Hungarian-Matching-Algorithm/) explaining the basic concepts of Hungarian matching algorithm. 
+In the [End-to-End Object Detection with Transformers](https://arxiv.org/abs/2005.12872) paper, they directly predict $N$ number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use *Hungarian matching* algorithm. There is a [great blogpost by Lei Mao](https://leimao.github.io/blog/Hungarian-Matching-Algorithm/) explaining the basic concepts of Hungarian matching algorithm. 
 
 # Short summary of the problem
-In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select $$n$$ best prediction boxes among the $$m$$ outputs. 
+In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select $n$ best prediction boxes among the $m$ outputs. 
 
-To do this, we form a cost matrix $$C$$ with the size $$m \times n$$ , where $$m$$ is the number of predictions and $$n$$ is the number of targets where $$m > n$$ . $$C_{i,j}$$ would be the matching cost of prediction $$i$$ and ground truth box $$j$$ . 
+To do this, we form a cost matrix $C$ with the size $m \times n$ , where $m$ is the number of predictions and $n$ is the number of targets where $m > n$ . $C_{i,j}$ would be the matching cost of prediction $i$ and ground truth box $j$ . 
 
 # Matching cost
-Matching cost of the element $$C_{ij}$$ is given by:
+Matching cost of the element $C_{ij}$ is given by:
 
 $$
 \begin{equation}
@@ -27,8 +25,8 @@ C_{ij} = \mathcal{L}_{iou}(b_i, \hat{b}_j) + ||b_i - \hat{b}_j||_1 - \hat{p}_j(c
 \end{equation}
 $$
 
-where $$\hat{p}_j(c_i)$$ is the probability of the target class. 
-After calculating the cost matrix $$C$$, we can use [linar sum assignment](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment) function from the SciPy package. It returns the *row_ids* and *column_ids* which corresponds to the (matched_predictions_ids, target_ids).
+where $\hat{p}_j(c_i)$ is the probability of the target class. 
+After calculating the cost matrix $C$, we can use [linar sum assignment](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment) function from the SciPy package. It returns the *row_ids* and *column_ids* which corresponds to the (matched_predictions_ids, target_ids).
 
 # Code
 Following is the simplified version of the Hungarian matching algorithm used in the [source code of DETR](https://github.com/facebookresearch/detr/blob/main/models/matcher.py). 
@@ -53,4 +51,4 @@ match_preds, match_targets = linear_sum_assignment(cost_matrix)
 print(match_preds, match_targets)
 #[2 9] [0 1]
 ```
-In this example, predictions $$2,9$$ matched with $$0,1$$ target boxes, respecitvely : (2<->0), (9<->1)
+In this example, predictions $2,9$ matched with $0,1$ target boxes, respecitvely : (2<->0), (9<->1)

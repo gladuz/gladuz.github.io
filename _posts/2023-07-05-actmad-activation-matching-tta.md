@@ -3,12 +3,11 @@ layout: post
 title: "ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review"
 date: 2023-07-05
 description: Test-time adaptation introduction and review of the ActMAD paper
-tags: deep-learning paper-note tta
+tags: deep-learning paper-notes tta
 giscus_comments: true
 #categories: 
 related_posts: true
 ---
-
 # Test-time adaptation
 
 Test-time adaptation is one of the emerging topics in tackling distribution shift in model deployment. Typically, the lifecycle of the model deployment includes followings:
@@ -40,9 +39,9 @@ The problem with most of the existing methods is they have constraints on the ty
 [**ActMAD** paper](https://arxiv.org/abs/2211.12870) proposes a versatile TTA method which works on any model or task regardless of their design structure. It works by aligning the distribution of individual features across the network. Previous feature alignment techniques used the distribution feature maps as a group. **ActMAD** takes each individual feature vector and aligns it with the source model. Since the features have position awareness, it allows the network to adapt in fine-grained detail depending on the location of the object in interest. For example, roads are usually on the bottom of the image so the features on the bottom have different distribution than the feature on the top.
 
 ## Feature alignment/activation matching 
-During the test phase we keep the original source model $$\theta^*$$ and adapt our model $$\theta$$ by taking the statistics of the activation outputs after the normalization layer.
+During the test phase we keep the original source model $\theta^*$ and adapt our model $\theta$ by taking the statistics of the activation outputs after the normalization layer.
 
-Let say the activation layer $$l$$ 's output is $$a_l = norm(conv(a_{l-1}))$$. Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have $$\hat{\mu_l}$$ and $$\hat{\sigma_l}$$ for each layer. In test time we compute the loss at layer $$l$$ as:
+Let say the activation layer $l$ 's output is $a_l = norm(conv(a_{l-1}))$. Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have $\hat{\mu_l}$ and $\hat{\sigma_l}$ for each layer. In test time we compute the loss at layer $l$ as:
 
 $$ \begin{equation} L_l(\theta) = |\mu_l - \hat{\mu}_l| + |\sigma^2_l - \hat{\sigma}^2_l| \end{equation}$$
 

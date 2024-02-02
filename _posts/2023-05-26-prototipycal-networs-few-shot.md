@@ -3,14 +3,12 @@ layout: post
 title: Few-shot image classification using Prototypical Networks
 date: 2023-05-26
 description: Basic implementation exampleof prototypical networks in Pytorch
-tags: deep-learning paper-note
+tags: deep-learning paper-notes
 giscus_comments: true
 #categories: 
 #related_posts: false
 ---
-
-
-In few-shot image classification problem, $$K$$ examples of $$N$$ types of images are given as an "support" set and the task is to classify the new images by comparing them to those images.
+In few-shot image classification problem, $K$ examples of $N$ types of images are given as an "support" set and the task is to classify the new images by comparing them to those images.
 {% include figure.html path="assets/img/protoypical-network-training-example.png" title="example image" class="img-fluid rounded z-depth-1" %}
 <div class="caption">https://cs330.stanford.edu/lecture_slides/cs330_transfer_meta_learning.pdf</div>
 
