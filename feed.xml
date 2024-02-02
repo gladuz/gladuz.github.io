@@ -1,5 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2023-07-05T16:09:36+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
-</subtitle><entry><title type="html">ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review</title><link href="https://tursunboev.com/blog/2023/actmad-activation-matching-tta/" rel="alternate" type="text/html" title="ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review" /><published>2023-07-05T00:00:00+00:00</published><updated>2023-07-05T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/actmad-activation-matching-tta</id><content type="html" xml:base="https://tursunboev.com/blog/2023/actmad-activation-matching-tta/"><![CDATA[<h1 id="test-time-adaptation">Test-time adaptation</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-02-02T02:19:53+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
+</subtitle><entry><title type="html">How to make Obsidian and Jekyll equations compatible</title><link href="https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar/" rel="alternate" type="text/html" title="How to make Obsidian and Jekyll equations compatible" /><published>2024-02-01T00:00:00+00:00</published><updated>2024-02-01T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar</id><content type="html" xml:base="https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar/"><![CDATA[<h1 id="tldr">TL;DR</h1>
+<p>Set <code class="language-plaintext highlighter-rouge">processEscapes</code> to <code class="language-plaintext highlighter-rouge">False</code> or remove it from <code class="language-plaintext highlighter-rouge">tax</code> dictionary</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script&gt;</span>
+<span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">tex</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">inlineMath</span><span class="p">:</span> <span class="p">[[</span><span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">],</span> <span class="p">[</span><span class="dl">'</span><span class="se">\\</span><span class="s1">(</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="se">\\</span><span class="s1">)</span><span class="dl">'</span><span class="p">]],</span>
+  <span class="p">},</span>
+  <span class="na">svg</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">fontCache</span><span class="p">:</span> <span class="dl">'</span><span class="s1">global</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">id=</span><span class="s">"MathJax-script"</span> <span class="na">async</span>
+  <span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<h1 id="what-was-not-working">What was not working</h1>
+<p>I’ve tried to write blog posts using Obsidian for my Jekyll website. The issue was the Mathjax version I was using didn’t recognize single dollar sign for inline equations.</p>
+
+<p>I was using this Mathjax setup taken from the documentation:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script&gt;</span>
+<span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">tex</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">inlineMath</span><span class="p">:</span> <span class="p">[[</span><span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">],</span> <span class="p">[</span><span class="dl">'</span><span class="se">\\</span><span class="s1">(</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="se">\\</span><span class="s1">)</span><span class="dl">'</span><span class="p">]],</span>
+    <span class="na">processEscapes</span><span class="p">:</span> <span class="kc">true</span>
+  <span class="p">},</span>
+  <span class="na">svg</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">fontCache</span><span class="p">:</span> <span class="dl">'</span><span class="s1">global</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">id=</span><span class="s">"MathJax-script"</span> <span class="na">async</span>
+  <span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+<p>But the \$ signs in my markdown was displaying as \$ in the rendered HTML. Some of the related answers mentioned the issue of markdown + Mathjax processing order.</p>
+
+<p>I’ve tried different <code class="language-plaintext highlighter-rouge">inlineMath</code> options, but at the end downgrading to <code class="language-plaintext highlighter-rouge">2.x</code> version solved the problem.</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">async</span> <span class="na">src=</span><span class="s">"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-MML-AM_CHTML"</span><span class="nt">&gt;</span>
+ <span class="nt">&lt;/script&gt;</span>
+ <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/x-mathjax-config"</span><span class="nt">&gt;</span>
+    <span class="nx">MathJax</span><span class="p">.</span><span class="nx">Hub</span><span class="p">.</span><span class="nc">Config</span><span class="p">({</span>
+      <span class="na">extensions</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">tex2jax.js</span><span class="dl">"</span><span class="p">],</span>
+      <span class="na">jax</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">input/TeX</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">output/HTML-CSS</span><span class="dl">"</span><span class="p">],</span>
+      <span class="na">tex2jax</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">inlineMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">$</span><span class="dl">'</span><span class="p">],</span> <span class="p">[</span><span class="dl">"</span><span class="se">\\</span><span class="s2">(</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="se">\\</span><span class="s2">)</span><span class="dl">"</span><span class="p">]</span> <span class="p">],</span>
+        <span class="na">displayMath</span><span class="p">:</span> <span class="p">[</span> <span class="p">[</span><span class="dl">'</span><span class="s1">$$</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">$$</span><span class="dl">'</span><span class="p">],</span> <span class="p">[</span><span class="dl">"</span><span class="se">\\</span><span class="s2">[</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="se">\\</span><span class="s2">]</span><span class="dl">"</span><span class="p">]</span> <span class="p">],</span>
+      <span class="p">},</span>
+      <span class="dl">"</span><span class="s2">HTML-CSS</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span> <span class="na">availableFonts</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">TeX</span><span class="dl">"</span><span class="p">]</span> <span class="p">}</span>
+    <span class="p">});</span>
+ <span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>However after trying with options later, turns out just removing <code class="language-plaintext highlighter-rouge">processEscapes</code> seem to solve the problem.</p>]]></content><author><name></name></author><category term="obsidian" /><category term="jekyll" /><summary type="html"><![CDATA[Fixing the single dollar display compatibility between Obsidian and Jekyll]]></summary></entry><entry><title type="html">ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review</title><link href="https://tursunboev.com/blog/2023/actmad-activation-matching-tta/" rel="alternate" type="text/html" title="ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review" /><published>2023-07-05T00:00:00+00:00</published><updated>2023-07-05T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/actmad-activation-matching-tta</id><content type="html" xml:base="https://tursunboev.com/blog/2023/actmad-activation-matching-tta/"><![CDATA[<h1 id="test-time-adaptation">Test-time adaptation</h1>
 
 <p>Test-time adaptation is one of the emerging topics in tackling distribution shift in model deployment. Typically, the lifecycle of the model deployment includes followings:</p>
 <ol>
@@ -51,9 +106,9 @@ Also the test data is given in a stream, so we won’t even have access to the e
 <p><a href="https://arxiv.org/abs/2211.12870"><strong>ActMAD</strong> paper</a> proposes a versatile TTA method which works on any model or task regardless of their design structure. It works by aligning the distribution of individual features across the network. Previous feature alignment techniques used the distribution feature maps as a group. <strong>ActMAD</strong> takes each individual feature vector and aligns it with the source model. Since the features have position awareness, it allows the network to adapt in fine-grained detail depending on the location of the object in interest. For example, roads are usually on the bottom of the image so the features on the bottom have different distribution than the feature on the top.</p>
 
 <h2 id="feature-alignmentactivation-matching">Feature alignment/activation matching</h2>
-<p>During the test phase we keep the original source model \(\theta^*\) and adapt our model \(\theta\) by taking the statistics of the activation outputs after the normalization layer.</p>
+<p>During the test phase we keep the original source model $\theta^*$ and adapt our model $\theta$ by taking the statistics of the activation outputs after the normalization layer.</p>
 
-<p>Let say the activation layer \(l\) ‘s output is \(a_l = norm(conv(a_{l-1}))\). Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have \(\hat{\mu_l}\) and \(\hat{\sigma_l}\) for each layer. In test time we compute the loss at layer \(l\) as:</p>
+<p>Let say the activation layer $l$ ‘s output is $a_l = norm(conv(a_{l-1}))$. Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have $\hat{\mu_l}$ and $\hat{\sigma_l}$ for each layer. In test time we compute the loss at layer $l$ as:</p>
 
 \[\begin{equation} L_l(\theta) = |\mu_l - \hat{\mu}_l| + |\sigma^2_l - \hat{\sigma}^2_l| \end{equation}\]
 
@@ -102,9 +157,9 @@ Also the test data is given in a stream, so we won’t even have access to the e
 <h2 id="conclusion">Conclusion</h2>
 
 <p>The proposed method takes different approach in TTA by being fully compatible with any task or architecture. It is especially great in data with location dependent structures: road images, selfies etc.
-One drawback is it requires the statistics of the activations from the source data which may not be available.</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-note" /><category term="tta" /><summary type="html"><![CDATA[Test-time adaptation introduction and review of the ActMAD paper]]></summary></entry><entry><title type="html">LoRA : Low-Rank Adaptation of Large Language Models</title><link href="https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms/" rel="alternate" type="text/html" title="LoRA : Low-Rank Adaptation of Large Language Models" /><published>2023-05-30T00:00:00+00:00</published><updated>2023-05-30T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms</id><content type="html" xml:base="https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms/"><![CDATA[<p><strong>Paper link:</strong> <a href="https://arxiv.org/abs/2106.09685">https://arxiv.org/abs/2106.09685</a></p>
+One drawback is it requires the statistics of the activations from the source data which may not be available.</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-notes" /><category term="tta" /><summary type="html"><![CDATA[Test-time adaptation introduction and review of the ActMAD paper]]></summary></entry><entry><title type="html">LoRA : Low-Rank Adaptation of Large Language Models</title><link href="https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms/" rel="alternate" type="text/html" title="LoRA : Low-Rank Adaptation of Large Language Models" /><published>2023-05-30T00:00:00+00:00</published><updated>2023-05-30T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms</id><content type="html" xml:base="https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms/"><![CDATA[<p><strong>Paper link:</strong> <a href="https://arxiv.org/abs/2106.09685">https://arxiv.org/abs/2106.09685</a></p>
 
-<p>Instead of updating the pre-trained model weights \(W_0\) directly, low-rank decomposition matrices added \(W_0 + BA\) where \(B,A \in R^{d \times r}\)  and only \(BA\) is finetuned keeping \(W_0\) is frozen. After the training, they can be added to get final model.</p>
+<p>Instead of updating the pre-trained model weights $W_0$ directly, low-rank decomposition matrices added $W_0 + BA$ where $B,A \in R^{d \times r}$  and only $BA$ is finetuned keeping $W_0$ is frozen. After the training, they can be added to get final model.</p>
 <figure>
 
   <picture>
@@ -124,18 +179,18 @@ One drawback is it requires the statistics of the activations from the source da
 <h1 id="advantages">Advantages</h1>
 <ul>
   <li>Large pre-trained model weights are not changed during fine-tuning.</li>
-  <li>Inference is the same, \(Wx = W_0x + BAx = (W_0+BA)x\)</li>
-  <li>It is efficient and have small training footprint (Only \(BA\) matrices are trained)</li>
-  <li>Swapping the models in deployment is fast. \(W = (W - BA) + B^\prime A^\prime\)</li>
+  <li>Inference is the same, $Wx = W_0x + BAx = (W_0+BA)x$</li>
+  <li>It is efficient and have small training footprint (Only $BA$ matrices are trained)</li>
+  <li>Swapping the models in deployment is fast. $W = (W - BA) + B^\prime A^\prime$</li>
 </ul>
 
 <h1 id="detailed-notes">Detailed notes</h1>
 <p>When adopting LLMs into downstream tasks, they are fine-tuned to learn those tasks. If we fine-tune entire network, it will have huge training and storage costs and each task will require separate model.</p>
 
-<p>The goal is to use small number of parameters when adopting to new tasks. The hypothesis is that the updates to the network during fine-tuning have low “intrinsic rank”. So we can limit the weight updates to the low-rank decomposition \(W_0 + \Delta W = W_0 + BA\), where \(B, A \in R^{d\times r}, r&lt;&lt;min(d,k)\) 
-If the \(r=d\) then it represents the full model update so it can recover full training in theory.</p>
+<p>The goal is to use small number of parameters when adopting to new tasks. The hypothesis is that the updates to the network during fine-tuning have low “intrinsic rank”. So we can limit the weight updates to the low-rank decomposition $W_0 + \Delta W = W_0 + BA$, where $B, A \in R^{d\times r}, r«min(d,k)$ 
+If the $r=d$ then it represents the full model update so it can recover full training in theory.</p>
 
-<p>For multiple tasks during inference, multiple \((BA)_t\) can be swapped for each task \(t\) while keeping the large \(W_0\) in memory. For reference \(BA\) has \(2d\) number of parameters while \(W_0\) has \(d^2\).</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-note" /><category term="transformers" /><summary type="html"><![CDATA[Paper link: https://arxiv.org/abs/2106.09685]]></summary></entry><entry><title type="html">Few-shot image classification using Prototypical Networks</title><link href="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/" rel="alternate" type="text/html" title="Few-shot image classification using Prototypical Networks" /><published>2023-05-26T00:00:00+00:00</published><updated>2023-05-26T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/prototipycal-networs-few-shot</id><content type="html" xml:base="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/"><![CDATA[<p>In few-shot image classification problem, \(K\) examples of \(N\) types of images are given as an “support” set and the task is to classify the new images by comparing them to those images.</p>
+<p>For multiple tasks during inference, multiple $(BA)_t$ can be swapped for each task $t$ while keeping the large $W_0$ in memory. For reference $BA$ has $2d$ number of parameters while $W_0$ has $d^2$.</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-notes" /><category term="transformers" /><summary type="html"><![CDATA[Paper link: https://arxiv.org/abs/2106.09685]]></summary></entry><entry><title type="html">Few-shot image classification using Prototypical Networks</title><link href="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/" rel="alternate" type="text/html" title="Few-shot image classification using Prototypical Networks" /><published>2023-05-26T00:00:00+00:00</published><updated>2023-05-26T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/prototipycal-networs-few-shot</id><content type="html" xml:base="https://tursunboev.com/blog/2023/prototipycal-networs-few-shot/"><![CDATA[<p>In few-shot image classification problem, $K$ examples of $N$ types of images are given as an “support” set and the task is to classify the new images by comparing them to those images.</p>
 <figure>
 
   <picture>
@@ -190,23 +245,23 @@ If the \(r=d\) then it represents the full model update so it can recover full t
 </span><span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">query_dist</span><span class="p">,</span> <span class="n">query_labels</span><span class="p">)</span>
 
 <span class="c1">#.... Backprop, accuracy etc.
-</span></code></pre></div></div>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-note" /><summary type="html"><![CDATA[Basic implementation exampleof prototypical networks in Pytorch]]></summary></entry><entry><title type="html">Hungarian matching algorithm in DETR</title><link href="https://tursunboev.com/blog/2023/hungarian-matching-detr/" rel="alternate" type="text/html" title="Hungarian matching algorithm in DETR" /><published>2023-04-20T00:00:00+00:00</published><updated>2023-04-20T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/hungarian-matching-detr</id><content type="html" xml:base="https://tursunboev.com/blog/2023/hungarian-matching-detr/"><![CDATA[<h1 id="introduction">Introduction</h1>
-<p>In the <a href="https://arxiv.org/abs/2005.12872">End-to-End Object Detection with Transformers</a> paper, they directly predict \(N\) number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use <em>Hungarian matching</em> algorithm. There is a <a href="https://leimao.github.io/blog/Hungarian-Matching-Algorithm/">great blogpost by Lei Mao</a> explaining the basic concepts of Hungarian matching algorithm.</p>
+</span></code></pre></div></div>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-notes" /><summary type="html"><![CDATA[Basic implementation exampleof prototypical networks in Pytorch]]></summary></entry><entry><title type="html">Hungarian matching algorithm in DETR</title><link href="https://tursunboev.com/blog/2023/hungarian-matching-detr/" rel="alternate" type="text/html" title="Hungarian matching algorithm in DETR" /><published>2023-04-20T00:00:00+00:00</published><updated>2023-04-20T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2023/hungarian-matching-detr</id><content type="html" xml:base="https://tursunboev.com/blog/2023/hungarian-matching-detr/"><![CDATA[<h1 id="introduction">Introduction</h1>
+<p>In the <a href="https://arxiv.org/abs/2005.12872">End-to-End Object Detection with Transformers</a> paper, they directly predict $N$ number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use <em>Hungarian matching</em> algorithm. There is a <a href="https://leimao.github.io/blog/Hungarian-Matching-Algorithm/">great blogpost by Lei Mao</a> explaining the basic concepts of Hungarian matching algorithm.</p>
 
 <h1 id="short-summary-of-the-problem">Short summary of the problem</h1>
-<p>In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select \(n\) best prediction boxes among the \(m\) outputs.</p>
+<p>In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select $n$ best prediction boxes among the $m$ outputs.</p>
 
-<p>To do this, we form a cost matrix \(C\) with the size \(m \times n\) , where \(m\) is the number of predictions and \(n\) is the number of targets where \(m &gt; n\) . \(C_{i,j}\) would be the matching cost of prediction \(i\) and ground truth box \(j\) .</p>
+<p>To do this, we form a cost matrix $C$ with the size $m \times n$ , where $m$ is the number of predictions and $n$ is the number of targets where $m &gt; n$ . $C_{i,j}$ would be the matching cost of prediction $i$ and ground truth box $j$ .</p>
 
 <h1 id="matching-cost">Matching cost</h1>
-<p>Matching cost of the element \(C_{ij}\) is given by:</p>
+<p>Matching cost of the element $C_{ij}$ is given by:</p>
 
 \[\begin{equation}
 C_{ij} = \mathcal{L}_{iou}(b_i, \hat{b}_j) + ||b_i - \hat{b}_j||_1 - \hat{p}_j(c_i)
 \end{equation}\]
 
-<p>where \(\hat{p}_j(c_i)\) is the probability of the target class. 
-After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment">linar sum assignment</a> function from the SciPy package. It returns the <em>row_ids</em> and <em>column_ids</em> which corresponds to the (matched_predictions_ids, target_ids).</p>
+<p>where $\hat{p}_j(c_i)$ is the probability of the target class. 
+After calculating the cost matrix $C$, we can use <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment">linar sum assignment</a> function from the SciPy package. It returns the <em>row_ids</em> and <em>column_ids</em> which corresponds to the (matched_predictions_ids, target_ids).</p>
 
 <h1 id="code">Code</h1>
 <p>Following is the simplified version of the Hungarian matching algorithm used in the <a href="https://github.com/facebookresearch/detr/blob/main/models/matcher.py">source code of DETR</a>.</p>
@@ -230,4 +285,4 @@ After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.
 <span class="nf">print</span><span class="p">(</span><span class="n">match_preds</span><span class="p">,</span> <span class="n">match_targets</span><span class="p">)</span>
 <span class="c1">#[2 9] [0 1]
 </span></code></pre></div></div>
-<p>In this example, predictions \(2,9\) matched with \(0,1\) target boxes, respecitvely : (2&lt;-&gt;0), (9&lt;-&gt;1)</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-note" /><summary type="html"><![CDATA[Explaining Hungarian matching algorithm used in DETR with a small example]]></summary></entry></feed>
+<p>In this example, predictions $2,9$ matched with $0,1$ target boxes, respecitvely : (2&lt;-&gt;0), (9&lt;-&gt;1)</p>]]></content><author><name></name></author><category term="deep-learning" /><category term="paper-notes" /><summary type="html"><![CDATA[Explaining Hungarian matching algorithm used in DETR with a small example]]></summary></entry></feed>

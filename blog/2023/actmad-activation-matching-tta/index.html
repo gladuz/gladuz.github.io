@@ -117,8 +117,8 @@
         ·  
         <a href="/blog/tag/deep-learning">
           <i class="fas fa-hashtag fa-sm"></i> deep-learning</a>  
-          <a href="/blog/tag/paper-note">
-          <i class="fas fa-hashtag fa-sm"></i> paper-note</a>  
+          <a href="/blog/tag/paper-notes">
+          <i class="fas fa-hashtag fa-sm"></i> paper-notes</a>  
           <a href="/blog/tag/tta">
           <i class="fas fa-hashtag fa-sm"></i> tta</a>  
           
@@ -182,9 +182,9 @@ Also the test data is given in a stream, so we won’t even have access to the e
 <p><a href="https://arxiv.org/abs/2211.12870" rel="external nofollow noopener" target="_blank"><strong>ActMAD</strong> paper</a> proposes a versatile TTA method which works on any model or task regardless of their design structure. It works by aligning the distribution of individual features across the network. Previous feature alignment techniques used the distribution feature maps as a group. <strong>ActMAD</strong> takes each individual feature vector and aligns it with the source model. Since the features have position awareness, it allows the network to adapt in fine-grained detail depending on the location of the object in interest. For example, roads are usually on the bottom of the image so the features on the bottom have different distribution than the feature on the top.</p>
 
 <h2 id="feature-alignmentactivation-matching">Feature alignment/activation matching</h2>
-<p>During the test phase we keep the original source model \(\theta^*\) and adapt our model \(\theta\) by taking the statistics of the activation outputs after the normalization layer.</p>
+<p>During the test phase we keep the original source model $\theta^*$ and adapt our model $\theta$ by taking the statistics of the activation outputs after the normalization layer.</p>
 
-<p>Let say the activation layer \(l\) ‘s output is \(a_l = norm(conv(a_{l-1}))\). Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have \(\hat{\mu_l}\) and \(\hat{\sigma_l}\) for each layer. In test time we compute the loss at layer \(l\) as:</p>
+<p>Let say the activation layer $l$ ‘s output is $a_l = norm(conv(a_{l-1}))$. Its mean and variances can be calculated across the test batch. We pre-compute the source models activation statistics on the training dataset and have $\hat{\mu_l}$ and $\hat{\sigma_l}$ for each layer. In test time we compute the loss at layer $l$ as:</p>
 
 \[\begin{equation} L_l(\theta) = |\mu_l - \hat{\mu}_l| + |\sigma^2_l - \hat{\sigma}^2_l| \end{equation}\]
 
@@ -252,6 +252,12 @@ One drawback is it requires the statistics of the activations from the source da
   
 
   <li class="my-2">
+    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2024/obsidian-jekyll-mathjax-single-dollar/">How to make Obsidian and Jekyll equations compatible</a>
+  </li>
+
+  
+
+  <li class="my-2">
     <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/low-rank-adaptation-of-large-llms/">LoRA : Low-Rank Adaptation of Large Language Models</a>
   </li>
 
@@ -302,7 +308,7 @@ One drawback is it requires the statistics of the activations from the source da
     <!-- Footer -->    
     <footer class="fixed-bottom">
       <div class="container mt-0">
-        © Copyright 2023 Jamshid  Tursunboev. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>.
+        © Copyright 2024 Jamshid  Tursunboev. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>.
 
       </div>
     </footer>
@@ -330,16 +336,32 @@ One drawback is it requires the statistics of the activations from the source da
   <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script>
   <script async src="https://badge.dimensions.ai/badge.js"></script>
 
-    <!-- MathJax -->
+    <!-- MathJax 
   <script type="text/javascript">
     window.MathJax = {
       tex: {
         tags: 'ams'
+	processEscapes: true,
       }
     };
   </script>
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  -->
+  
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KEZ6P19N1H"></script>

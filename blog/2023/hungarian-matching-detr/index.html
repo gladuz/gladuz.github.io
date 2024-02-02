@@ -117,8 +117,8 @@
         ·  
         <a href="/blog/tag/deep-learning">
           <i class="fas fa-hashtag fa-sm"></i> deep-learning</a>  
-          <a href="/blog/tag/paper-note">
-          <i class="fas fa-hashtag fa-sm"></i> paper-note</a>  
+          <a href="/blog/tag/paper-notes">
+          <i class="fas fa-hashtag fa-sm"></i> paper-notes</a>  
           
 
     </p>
@@ -126,22 +126,22 @@
 
   <article class="post-content">
     <h1 id="introduction">Introduction</h1>
-<p>In the <a href="https://arxiv.org/abs/2005.12872" rel="external nofollow noopener" target="_blank">End-to-End Object Detection with Transformers</a> paper, they directly predict \(N\) number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use <em>Hungarian matching</em> algorithm. There is a <a href="https://leimao.github.io/blog/Hungarian-Matching-Algorithm/" rel="external nofollow noopener" target="_blank">great blogpost by Lei Mao</a> explaining the basic concepts of Hungarian matching algorithm.</p>
+<p>In the <a href="https://arxiv.org/abs/2005.12872" rel="external nofollow noopener" target="_blank">End-to-End Object Detection with Transformers</a> paper, they directly predict $N$ number of prediction boxes and treat them as set. To find the matching predicted boxes with the target boxes they use <em>Hungarian matching</em> algorithm. There is a <a href="https://leimao.github.io/blog/Hungarian-Matching-Algorithm/" rel="external nofollow noopener" target="_blank">great blogpost by Lei Mao</a> explaining the basic concepts of Hungarian matching algorithm.</p>
 
 <h1 id="short-summary-of-the-problem">Short summary of the problem</h1>
-<p>In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select \(n\) best prediction boxes among the \(m\) outputs.</p>
+<p>In the case of DETR, we predict 100 boxes which is more than maximum number of boxes almost any image. Our task is to find closest* predicted box for each target box. Meaning, we will select $n$ best prediction boxes among the $m$ outputs.</p>
 
-<p>To do this, we form a cost matrix \(C\) with the size \(m \times n\) , where \(m\) is the number of predictions and \(n\) is the number of targets where \(m &gt; n\) . \(C_{i,j}\) would be the matching cost of prediction \(i\) and ground truth box \(j\) .</p>
+<p>To do this, we form a cost matrix $C$ with the size $m \times n$ , where $m$ is the number of predictions and $n$ is the number of targets where $m &gt; n$ . $C_{i,j}$ would be the matching cost of prediction $i$ and ground truth box $j$ .</p>
 
 <h1 id="matching-cost">Matching cost</h1>
-<p>Matching cost of the element \(C_{ij}\) is given by:</p>
+<p>Matching cost of the element $C_{ij}$ is given by:</p>
 
 \[\begin{equation}
 C_{ij} = \mathcal{L}_{iou}(b_i, \hat{b}_j) + ||b_i - \hat{b}_j||_1 - \hat{p}_j(c_i)
 \end{equation}\]
 
-<p>where \(\hat{p}_j(c_i)\) is the probability of the target class. 
-After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment" rel="external nofollow noopener" target="_blank">linar sum assignment</a> function from the SciPy package. It returns the <em>row_ids</em> and <em>column_ids</em> which corresponds to the (matched_predictions_ids, target_ids).</p>
+<p>where $\hat{p}_j(c_i)$ is the probability of the target class. 
+After calculating the cost matrix $C$, we can use <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html#scipy.optimize.linear_sum_assignment" rel="external nofollow noopener" target="_blank">linar sum assignment</a> function from the SciPy package. It returns the <em>row_ids</em> and <em>column_ids</em> which corresponds to the (matched_predictions_ids, target_ids).</p>
 
 <h1 id="code">Code</h1>
 <p>Following is the simplified version of the Hungarian matching algorithm used in the <a href="https://github.com/facebookresearch/detr/blob/main/models/matcher.py" rel="external nofollow noopener" target="_blank">source code of DETR</a>.</p>
@@ -165,7 +165,7 @@ After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.
 <span class="nf">print</span><span class="p">(</span><span class="n">match_preds</span><span class="p">,</span> <span class="n">match_targets</span><span class="p">)</span>
 <span class="c1">#[2 9] [0 1]
 </span></code></pre></div></div>
-<p>In this example, predictions \(2,9\) matched with \(0,1\) target boxes, respecitvely : (2&lt;-&gt;0), (9&lt;-&gt;1)</p>
+<p>In this example, predictions $2,9$ matched with $0,1$ target boxes, respecitvely : (2&lt;-&gt;0), (9&lt;-&gt;1)</p>
 
   </article><div id="giscus_thread" style="max-width: 800px; margin: 0 auto;">
   <script>
@@ -202,7 +202,7 @@ After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.
     <!-- Footer -->    
     <footer class="fixed-bottom">
       <div class="container mt-0">
-        © Copyright 2023 Jamshid  Tursunboev. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>.
+        © Copyright 2024 Jamshid  Tursunboev. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>.
 
       </div>
     </footer>
@@ -230,16 +230,32 @@ After calculating the cost matrix \(C\), we can use <a href="https://docs.scipy.
   <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script>
   <script async src="https://badge.dimensions.ai/badge.js"></script>
 
-    <!-- MathJax -->
+    <!-- MathJax 
   <script type="text/javascript">
     window.MathJax = {
       tex: {
         tags: 'ams'
+	processEscapes: true,
       }
     };
   </script>
   <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
-  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  -->
+  
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+
+<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KEZ6P19N1H"></script>
