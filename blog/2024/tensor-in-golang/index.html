@@ -283,33 +283,32 @@ We could implement it in two steps.</p>
   <li>Create new <code class="language-plaintext highlighter-rouge">Sizes</code> ignoring the slicing dimension</li>
   <li>Calculate <code class="language-plaintext highlighter-rouge">Strides</code> and <code class="language-plaintext highlighter-rouge">Offset</code> for the resulting tensor
 When calculating the <code class="language-plaintext highlighter-rouge">Strides</code> we should ignore the slicing dimension but the order of the strides should be the same. 
-For example: tensor <code class="language-plaintext highlighter-rouge">a</code> with sizes <code class="language-plaintext highlighter-rouge">[2,5,6]</code>, if we slice <code class="language-plaintext highlighter-rouge">a[:, 4, :]</code> we will get the new tensor with <code class="language-plaintext highlighter-rouge">size: [2,6], stride: [60, 30]</code>.
-    <div class="language-go highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code><span class="c">// Returns the view along the dimension with ind</span>
-<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">Tensor</span><span class="p">)</span> <span class="n">DimSlice</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">ind</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="n">Tensor</span> <span class="p">{</span>
- <span class="n">newSizes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
- <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span> <span class="p">{</span>
-     <span class="n">newSizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
- <span class="p">}</span>
- <span class="n">newStrides</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
- <span class="n">ii</span> <span class="o">:=</span> <span class="m">0</span>
- <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
-     <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">dim</span> <span class="p">{</span>
-         <span class="n">newStrides</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-         <span class="n">ii</span><span class="o">++</span>
-     <span class="p">}</span>
- <span class="p">}</span>
- <span class="n">newOffset</span> <span class="o">:=</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">ind</span>
- <span class="k">return</span> <span class="o">&amp;</span><span class="n">Tensor</span><span class="p">{</span>
-     <span class="n">Data</span><span class="o">:</span>    <span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">,</span>
-     <span class="n">Sizes</span><span class="o">:</span>   <span class="n">newSizes</span><span class="p">,</span>
-     <span class="n">Strides</span><span class="o">:</span> <span class="n">newStrides</span><span class="p">,</span>
-     <span class="n">Offset</span><span class="o">:</span>  <span class="n">newOffset</span><span class="p">,</span>
- <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>    </div>
-  </li>
+For example: tensor <code class="language-plaintext highlighter-rouge">a</code> with sizes <code class="language-plaintext highlighter-rouge">[2,5,6]</code>, if we slice <code class="language-plaintext highlighter-rouge">a[:, 4, :]</code> we will get the new tensor with <code class="language-plaintext highlighter-rouge">size: [2,6], stride: [60, 30]</code>.</li>
 </ol>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Returns the view along the dimension with ind</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">Tensor</span><span class="p">)</span> <span class="n">DimSlice</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">ind</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="n">Tensor</span> <span class="p">{</span>
+	<span class="n">newSizes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span> <span class="p">{</span>
+		<span class="n">newSizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+	<span class="p">}</span>
+	<span class="n">newStrides</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
+	<span class="n">ii</span> <span class="o">:=</span> <span class="m">0</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">dim</span> <span class="p">{</span>
+			<span class="n">newStrides</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">ii</span><span class="o">++</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="n">newOffset</span> <span class="o">:=</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">ind</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">Tensor</span><span class="p">{</span>
+		<span class="n">Data</span><span class="o">:</span>    <span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">,</span>
+		<span class="n">Sizes</span><span class="o">:</span>   <span class="n">newSizes</span><span class="p">,</span>
+		<span class="n">Strides</span><span class="o">:</span> <span class="n">newStrides</span><span class="p">,</span>
+		<span class="n">Offset</span><span class="o">:</span>  <span class="n">newOffset</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>Here is the testing code for the <code class="language-plaintext highlighter-rouge">DimSlice</code> function:</p>
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">TestDimSlice</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
