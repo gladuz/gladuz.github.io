@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>LoRA : Low-Rank Adaptation of Large Language Models | Jamshid  Tursunboev</title>
+    <title>pytorch | Jamshid  Tursunboev</title>
     <meta name="author" content="Jamshid  Tursunboev">
     <meta name="description" content="Personal website of Jamshid Tursunboev
 ">
@@ -32,7 +32,7 @@
     <!-- Styles -->
     
     <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="canonical" href="https://tursunboev.com/blog/2023/low-rank-adaptation-of-large-llms/">
+    <link rel="canonical" href="https://tursunboev.com/blog/tag/pytorch/">
     
     <!-- Dark Mode -->
     
@@ -106,134 +106,28 @@
 
     <!-- Content -->
     <div class="container mt-5">
-      <!-- _layouts/post.html -->
-
-<div class="post">
+      <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">LoRA : Low-Rank Adaptation of Large Language Models</h1>
-    <p class="post-meta">May 30, 2023</p>
-    <p class="post-tags">
-      <a href="/blog/2023"> <i class="fas fa-calendar fa-sm"></i> 2023 </a>
-        ·  
-        <a href="/blog/tag/deep-learning">
-          <i class="fas fa-hashtag fa-sm"></i> deep-learning</a>  
-          <a href="/blog/tag/paper-notes">
-          <i class="fas fa-hashtag fa-sm"></i> paper-notes</a>  
-          <a href="/blog/tag/transformers">
-          <i class="fas fa-hashtag fa-sm"></i> transformers</a>  
-          
-
-    </p>
+    <h1 class="post-title"> <i class="fas fa-hashtag fa-sm"></i> pytorch </h1>
+    <p class="post-description"> an archive of posts with this tag </p>
   </header>
 
-  <article class="post-content">
-    <p><strong>Paper link:</strong> <a href="https://arxiv.org/abs/2106.09685" rel="external nofollow noopener" target="_blank">https://arxiv.org/abs/2106.09685</a></p>
-
-<p>Instead of updating the pre-trained model weights $W_0$ directly, low-rank decomposition matrices added $W_0 + BA$ where $B,A \in R^{d \times r}$  and only $BA$ is finetuned keeping $W_0$ is frozen. After the training, they can be added to get final model.</p>
-<figure>
-
-  <picture>
-    
-    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/lora-480.webp"></source>
-    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/lora-800.webp"></source>
-    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/lora-1400.webp"></source>
-    
-
-    <!-- Fallback to the original file -->
-    <img src="/assets/img/lora.png" class="img-fluid rounded z-depth-1 center" width="60%" height="auto" title="example image" onerror="this.onerror=null; $('.responsive-img-srcset').remove();">
-
-  </picture>
-
-</figure>
-
-<h1 id="advantages">Advantages</h1>
-<ul>
-  <li>Large pre-trained model weights are not changed during fine-tuning.</li>
-  <li>Inference is the same, $Wx = W_0x + BAx = (W_0+BA)x$</li>
-  <li>It is efficient and have small training footprint (Only $BA$ matrices are trained)</li>
-  <li>Swapping the models in deployment is fast. $W = (W - BA) + B^\prime A^\prime$</li>
-</ul>
-
-<h1 id="detailed-notes">Detailed notes</h1>
-<p>When adopting LLMs into downstream tasks, they are fine-tuned to learn those tasks. If we fine-tune entire network, it will have huge training and storage costs and each task will require separate model.</p>
-
-<p>The goal is to use small number of parameters when adopting to new tasks. The hypothesis is that the updates to the network during fine-tuning have low “intrinsic rank”. So we can limit the weight updates to the low-rank decomposition $W_0 + \Delta W = W_0 + BA$, where $B, A \in R^{d\times r}, r«min(d,k)$ 
-If the $r=d$ then it represents the full model update so it can recover full training in theory.</p>
-
-<p>For multiple tasks during inference, multiple $(BA)_t$ can be swapped for each task $t$ while keeping the large $W_0$ in memory. For reference $BA$ has $2d$ number of parameters while $W_0$ has $d^2$.</p>
-
+  <article>
+    <div class="table-responsive">
+      <table class="table table-sm table-borderless">
+        
+        <tr>
+          <th scope="row">Feb 28, 2024</th>
+          <td>
+              <a class="post-link" href="/blog/2024/tensor-in-golang/">Implementing Pytorch-like arbitrary dimensional Tensor in Go</a>
+          </td>
+        </tr>
+      
+      </table>
+    </div>
   </article>
 
-
-  
-    
-    <br>
-    <hr>
-    <br>
-    <ul class="list-disc pl-8"></ul>
-
-    <!-- Adds related posts to the end of an article -->
-    <h2 class="text-3xl font-semibold mb-4 mt-12">Enjoy Reading This Article?</h2>
-    <p class="mb-2">Here are some more articles you might like to read next:</p>
-  
-
-  <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2024/tensor-in-golang/">Implementing Pytorch-like arbitrary dimensional Tensor in Go</a>
-  </li>
-
-  
-
-  <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2024/obsidian-jekyll-mathjax-single-dollar/">How to make Obsidian and Jekyll equations compatible</a>
-  </li>
-
-  
-
-  <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/actmad-activation-matching-tta/">ActMAD : Activation Matching to Align Distributions for Test-Time-Training paper review</a>
-  </li>
-
-  
-
-  <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/prototipycal-networs-few-shot/">Few-shot image classification using Prototypical Networks</a>
-  </li>
-
-  
-
-  <li class="my-2">
-    <a class="text-pink-700 underline font-semibold hover:text-pink-800" href="/blog/2023/hungarian-matching-detr/">Hungarian matching algorithm in DETR</a>
-  </li>
-
-<div id="giscus_thread" style="max-width: 800px; margin: 0 auto;">
-  <script>
-    let giscusTheme = localStorage.getItem("theme");
-    let giscusAttributes = {
-        "src": "https://giscus.app/client.js",
-        "data-repo": "gladuz/gladuz.github.io",
-        "data-repo-id": "R_kgDOJSIt6A",
-        "data-category": "Announcements",
-        "data-category-id": "DIC_kwDOJSIt6M4CXnaf",
-        "data-mapping": "title",
-        "data-strict": "1",
-        "data-reactions-enabled": "1",
-        "data-emit-metadata": "0",
-        "data-input-position": "bottom",
-        "data-theme": giscusTheme,
-        "data-lang": "en",
-        "crossorigin": "anonymous",
-        "async": "",
-    };
-
-
-    let giscusScript = document.createElement("script");
-    Object.entries(giscusAttributes).forEach(([key, value]) => giscusScript.setAttribute(key, value));
-    document.getElementById("giscus_thread").appendChild(giscusScript);
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="http://giscus.app/?ref_noscript" rel="external nofollow noopener" target="_blank">comments powered by giscus.</a>
-</noscript>
-</div>
 </div>
 
     </div>

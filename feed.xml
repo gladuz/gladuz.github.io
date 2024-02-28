@@ -1,5 +1,205 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-02-04T07:48:43+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
-</subtitle><entry><title type="html">How to make Obsidian and Jekyll equations compatible</title><link href="https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar/" rel="alternate" type="text/html" title="How to make Obsidian and Jekyll equations compatible" /><published>2024-02-01T00:00:00+00:00</published><updated>2024-02-01T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar</id><content type="html" xml:base="https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar/"><![CDATA[<h1 id="tldr">TL;DR</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.3.3">Jekyll</generator><link href="https://tursunboev.com/feed.xml" rel="self" type="application/atom+xml" /><link href="https://tursunboev.com/" rel="alternate" type="text/html" hreflang="en" /><updated>2024-02-28T10:04:26+00:00</updated><id>https://tursunboev.com/feed.xml</id><title type="html">blank</title><subtitle>Personal website of Jamshid Tursunboev
+</subtitle><entry><title type="html">Implementing Pytorch-like arbitrary dimensional Tensor in Go</title><link href="https://tursunboev.com/blog/2024/tensor-in-golang/" rel="alternate" type="text/html" title="Implementing Pytorch-like arbitrary dimensional Tensor in Go" /><published>2024-02-28T00:00:00+00:00</published><updated>2024-02-28T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2024/tensor-in-golang</id><content type="html" xml:base="https://tursunboev.com/blog/2024/tensor-in-golang/"><![CDATA[<p>In one of the <a href="https://karpathy.ai/zero-to-hero.html">Karpathy’s videos</a>, he recommends the blogpost by Edward Z. Yang called <a href="http://blog.ezyang.com/2019/05/pytorch-internals/">PyTorch internals</a> to learn about the implementation of Tensor class in Pytorch. The blogpost is fantastic and goes into detailed representation of some of the basic functionality of Tensors.</p>
+
+<p>After reading the post, I tried to implement similar functionality in <a href="https://go.dev/">Go</a> using slices. In this post, I will walk through following methods of basic <code class="language-plaintext highlighter-rouge">Tensor</code> stuct:</p>
+<ul>
+  <li><a href="#creating-newtensor-from-data-or-empty">NewTensor (Creating empty Tensor)</a></li>
+  <li><a href="#accessing-the-single-element-with-at">At (indexing using arbitrary number of dimensions)</a></li>
+  <li><a href="#viewing-the-tensor-with-different-sizes">View (Returning different size tensor with the same underlying slice)</a></li>
+  <li><a href="#slicing-the-tensor-along-certain-dimension">DimSlice (hardest: Getting the slice of arbitrary dimension <code class="language-plaintext highlighter-rouge">a[:, :, 2, :]</code>)</a></li>
+</ul>
+
+<h1 id="tensor-struct">Tensor struct</h1>
+<p>Basic Tensor in Pytorch has the <code class="language-plaintext highlighter-rouge">data</code> in one dimensional continous array, and <code class="language-plaintext highlighter-rouge">sizes, strides, offset</code> for getting the multi-dimensional view of the Tensor.
+For detailed explanation, please refer to <a href="http://blog.ezyang.com/2019/05/pytorch-internals/">PyTorch internals</a>.</p>
+
+<figure>
+
+  <picture>
+    
+    <source class="responsive-img-srcset" media="(max-width: 480px)" srcset="/assets/img/slide-08-480.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 800px)" srcset="/assets/img/slide-08-800.webp" />
+    <source class="responsive-img-srcset" media="(max-width: 1400px)" srcset="/assets/img/slide-08-1400.webp" />
+    
+
+    <!-- Fallback to the original file -->
+    <img src="/assets/img/slide-08.png" class="img-fluid rounded z-depth-1" width="auto" height="auto" title="Tensor representation" onerror="this.onerror=null; $('.responsive-img-srcset').remove();" />
+
+  </picture>
+
+</figure>
+
+<div class="caption">http://blog.ezyang.com/2019/05/pytorch-internals/</div>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Tensor</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Sizes</span>   <span class="p">[]</span><span class="kt">int</span>
+	<span class="n">Strides</span> <span class="p">[]</span><span class="kt">int</span>
+	<span class="n">Offset</span>  <span class="kt">int</span>
+	<span class="n">Data</span>    <span class="p">[]</span><span class="kt">float64</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h2 id="creating-newtensor-from-data-or-empty">Creating NewTensor from data or empty</h2>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">NewTensor</span><span class="p">(</span><span class="n">data</span> <span class="p">[]</span><span class="kt">float64</span><span class="p">,</span> <span class="n">sizes</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="n">Tensor</span> <span class="p">{</span>
+	<span class="n">t</span> <span class="o">:=</span> <span class="n">Tensor</span><span class="p">{}</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Data</span> <span class="o">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">float64</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Sizes</span> <span class="o">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Offset</span> <span class="o">=</span> <span class="m">0</span>
+		<span class="n">t</span><span class="o">.</span><span class="n">Strides</span> <span class="o">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+		<span class="k">return</span> <span class="o">&amp;</span><span class="n">t</span>
+	<span class="p">}</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">Data</span> <span class="o">=</span> <span class="n">data</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">Sizes</span> <span class="o">=</span> <span class="n">sizes</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">Offset</span> <span class="o">=</span> <span class="m">0</span>
+
+	<span class="n">t</span><span class="o">.</span><span class="n">Strides</span> <span class="o">=</span> <span class="n">calculateStrides</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">t</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Sizes</code> is the dimension sizes (same as <code class="language-plaintext highlighter-rouge">.dim</code> or <code class="language-plaintext highlighter-rouge">.size()</code> in Pytorch)</li>
+  <li><code class="language-plaintext highlighter-rouge">Strides</code> is the required stride of each dimension, meaning how many elements should we skip to get to next element. 
+For example: how many elements between <code class="language-plaintext highlighter-rouge">a[1, 0]</code> and <code class="language-plaintext highlighter-rouge">a[2, 0]</code>.</li>
+</ul>
+
+<p>To calculate the strides of Tensor given its sizes, we reverse multiply each dimension until the first one.</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">calculateStrides</span><span class="p">(</span><span class="n">sizes</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+	<span class="n">strides</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sizes</span><span class="p">))</span>
+	<span class="n">inter_stride</span> <span class="o">:=</span> <span class="m">1</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">strides</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span> <span class="p">{</span>
+		<span class="n">strides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">inter_stride</span>
+		<span class="n">inter_stride</span> <span class="o">*=</span> <span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">strides</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>Lets take a tensor <code class="language-plaintext highlighter-rouge">a</code> with with sizes <code class="language-plaintext highlighter-rouge">[]int{3,5,4}</code>.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">a[0, 0, 0]</code> is in the <code class="language-plaintext highlighter-rouge">data[0]</code> position in underlying slice.</li>
+  <li><code class="language-plaintext highlighter-rouge">a[2, 0, 0]</code> is in <code class="language-plaintext highlighter-rouge">data[40] =&gt; 2*4*5=40</code>. For every increase in 1st dimension we go through 20 elements.</li>
+</ul>
+
+<h2 id="accessing-the-single-element-with-at-and-set">Accessing the single element with <code class="language-plaintext highlighter-rouge">.At()</code> and <code class="language-plaintext highlighter-rouge">.Set()</code></h2>
+<p>To access the single element using the indexes, we multiply and sum all the indexes and strides:</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">Tensor</span><span class="p">)</span> <span class="n">At</span><span class="p">(</span><span class="n">idx</span> <span class="o">...</span><span class="kt">int</span><span class="p">)</span> <span class="kt">float64</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="s">"Too many indices to access"</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">ind</span> <span class="o">:=</span> <span class="m">0</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="n">ind</span> <span class="o">+=</span> <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="n">ind</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="s">"The index is too high"</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">Offset</span><span class="o">+</span><span class="n">ind</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>We can create the <code class="language-plaintext highlighter-rouge">At()</code> method similar way by assigning new value to <code class="language-plaintext highlighter-rouge">t.Data[ind]</code>.</p>
+
+<p>So the tensor with sizes <code class="language-plaintext highlighter-rouge">[3,4,5]</code>, <code class="language-plaintext highlighter-rouge">a.At(1,2,4)</code> translates to <code class="language-plaintext highlighter-rouge">data[3*1+4*2+5*4] = data[21]</code>.
+Here is the test for this function:</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">TestMatrixAt</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s">"many dimensional"</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">a</span> <span class="o">:=</span> <span class="n">NewTensor</span><span class="p">([]</span><span class="kt">float64</span><span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">6</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">8</span><span class="p">},</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">})</span>
+		<span class="n">got</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="n">At</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+		<span class="n">want</span> <span class="o">:=</span> <span class="m">6.0</span>
+		<span class="k">if</span> <span class="n">got</span> <span class="o">!=</span> <span class="n">want</span> <span class="p">{</span>
+			<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"wanted %f, got %f"</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="n">got</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="viewing-the-tensor-with-different-sizes">Viewing the tensor with different sizes</h2>
+<p>Changing the size of the tensor only involves recalculating the strides without changes the underlying data at all. The only requirement is that the number of elements of the new and old sizes should be equal.</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">Tensor</span><span class="p">)</span> <span class="n">View</span><span class="p">(</span><span class="n">idx</span> <span class="o">...</span><span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="n">Tensor</span> <span class="p">{</span>
+  <span class="c">//prod(...idx) calculate the multiplies of elements idx[0]*idx[1]...idx[n]</span>
+	<span class="k">if</span> <span class="n">prod</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="s">"The dimensions do not match number of elements"</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">strides</span> <span class="o">:=</span> <span class="n">calcualteStrides</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">Tensor</span><span class="p">{</span>
+		<span class="n">Data</span><span class="o">:</span>    <span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">,</span>
+		<span class="n">Sizes</span><span class="o">:</span>   <span class="n">idx</span><span class="p">,</span>
+		<span class="n">Strides</span><span class="o">:</span> <span class="n">strides</span><span class="p">,</span>
+		<span class="n">Offset</span><span class="o">:</span>  <span class="m">0</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>We can test whether the returned tensor and original tensor share the same storage:</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">TestMatrixView</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s">"test view storage"</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">a</span> <span class="o">:=</span> <span class="n">NewTensor</span><span class="p">([]</span><span class="kt">float64</span><span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">6</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">8</span><span class="p">},</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">})</span>
+		<span class="n">b</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="n">View</span><span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+		<span class="n">a</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="m">12</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+		<span class="n">got</span> <span class="o">:=</span> <span class="n">b</span><span class="o">.</span><span class="n">At</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+		<span class="n">want</span> <span class="o">:=</span> <span class="m">12.0</span>
+		<span class="k">if</span> <span class="n">got</span> <span class="o">!=</span> <span class="n">want</span> <span class="p">{</span>
+			<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"wanted %f, got %f"</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="n">got</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="slicing-the-tensor-along-certain-dimension">Slicing the tensor along certain dimension</h2>
+<p>By far the most interesting implementation was slicing the tensor. In numpy-like api we can use <code class="language-plaintext highlighter-rouge">arr[:, 3, :]</code> to get the slice of the 2nd row of 3rd dimension. In this case we have to update all three <code class="language-plaintext highlighter-rouge">Strides, Sizes, Offset</code> attributes since the both size and number of elements change in the resulting tensor. 
+<strong>We should use the same underlying array without copying any elements</strong>.
+We could implement it in two steps.</p>
+<ol>
+  <li>Create new <code class="language-plaintext highlighter-rouge">Sizes</code> ignoring the slicing dimension</li>
+  <li>Calculate <code class="language-plaintext highlighter-rouge">Strides</code> and <code class="language-plaintext highlighter-rouge">Offset</code> for the resulting tensor
+When calculating the <code class="language-plaintext highlighter-rouge">Strides</code> we should ignore the slicing dimension but the order of the strides should be the same. 
+For example: tensor <code class="language-plaintext highlighter-rouge">a</code> with sizes <code class="language-plaintext highlighter-rouge">[2,5,6]</code>, if we slice <code class="language-plaintext highlighter-rouge">a[:, 4, :]</code> we will get the new tensor with <code class="language-plaintext highlighter-rouge">size: [2,6], stride: [60, 30]</code>.
+    <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// Returns the view along the dimension with ind</span>
+<span class="k">func</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">Tensor</span><span class="p">)</span> <span class="n">DimSlice</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">ind</span> <span class="kt">int</span><span class="p">)</span> <span class="o">*</span><span class="n">Tensor</span> <span class="p">{</span>
+ <span class="n">newSizes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
+ <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span> <span class="p">{</span>
+     <span class="n">newSizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+ <span class="p">}</span>
+ <span class="n">newStrides</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">)</span>
+ <span class="n">ii</span> <span class="o">:=</span> <span class="m">0</span>
+ <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+     <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">dim</span> <span class="p">{</span>
+         <span class="n">newStrides</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+         <span class="n">ii</span><span class="o">++</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+ <span class="n">newOffset</span> <span class="o">:=</span> <span class="n">t</span><span class="o">.</span><span class="n">Strides</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">ind</span>
+ <span class="k">return</span> <span class="o">&amp;</span><span class="n">Tensor</span><span class="p">{</span>
+     <span class="n">Data</span><span class="o">:</span>    <span class="n">t</span><span class="o">.</span><span class="n">Data</span><span class="p">,</span>
+     <span class="n">Sizes</span><span class="o">:</span>   <span class="n">newSizes</span><span class="p">,</span>
+     <span class="n">Strides</span><span class="o">:</span> <span class="n">newStrides</span><span class="p">,</span>
+     <span class="n">Offset</span><span class="o">:</span>  <span class="n">newOffset</span><span class="p">,</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Here is the testing code for the <code class="language-plaintext highlighter-rouge">DimSlice</code> function:</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">TestDimSlice</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">a</span> <span class="o">:=</span> <span class="n">NewTensor</span><span class="p">([]</span><span class="kt">float64</span><span class="p">{</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">6</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">8</span><span class="p">},</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">})</span>
+  <span class="c">/*
+			tensor([[[1, 2],
+					[3, 4]],
+          [[5,6],
+          [7,8]]])
+		*/</span>
+	<span class="n">t</span><span class="o">.</span><span class="n">Run</span><span class="p">(</span><span class="s">"test getting 2 dim"</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">b</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="n">DimSlice</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+		<span class="c">/*
+			tensor([[2, 4],
+					[6, 8]])
+		*/</span>
+		<span class="n">got</span> <span class="o">:=</span> <span class="n">b</span><span class="o">.</span><span class="n">At</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+		<span class="n">want</span> <span class="o">:=</span> <span class="m">6.0</span>
+		<span class="k">if</span> <span class="n">got</span> <span class="o">!=</span> <span class="n">want</span> <span class="p">{</span>
+			<span class="n">t</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"wanted %f, got %f"</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="n">got</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">})</span>
+</code></pre></div></div>
+
+<p>I wholehardely recommend reading the original blogpost, it has much more detailed and in-depth information that is far beyond the scope of this blogpost. Thanks for reading this far :)</p>]]></content><author><name></name></author><category term="pytorch" /><category term="go" /><category term="implementation" /><summary type="html"><![CDATA[Generic Tensor implementation and testable code for At, View, DimSlice with the same underlying storage (like Pytorch).]]></summary></entry><entry><title type="html">How to make Obsidian and Jekyll equations compatible</title><link href="https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar/" rel="alternate" type="text/html" title="How to make Obsidian and Jekyll equations compatible" /><published>2024-02-01T00:00:00+00:00</published><updated>2024-02-01T00:00:00+00:00</updated><id>https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar</id><content type="html" xml:base="https://tursunboev.com/blog/2024/obsidian-jekyll-mathjax-single-dollar/"><![CDATA[<h1 id="tldr">TL;DR</h1>
 <p>Set <code class="language-plaintext highlighter-rouge">processEscapes</code> to <code class="language-plaintext highlighter-rouge">False</code> or remove it from <code class="language-plaintext highlighter-rouge">tax</code> dictionary</p>
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script&gt;</span>
 <span class="nx">MathJax</span> <span class="o">=</span> <span class="p">{</span>
