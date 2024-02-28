@@ -148,6 +148,7 @@ We could implement it in two steps.
 2. Calculate `Strides` and `Offset` for the resulting tensor
 When calculating the `Strides` we should ignore the slicing dimension but the order of the strides should be the same. 
 For example: tensor `a` with sizes `[2,5,6]`, if we slice `a[:, 4, :]` we will get the new tensor with `size: [2,6], stride: [60, 30]`.
+
 ```go
 // Returns the view along the dimension with ind
 func (t *Tensor) DimSlice(dim, ind int) *Tensor {
