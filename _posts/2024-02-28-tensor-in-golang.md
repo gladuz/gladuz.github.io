@@ -19,6 +19,7 @@ After reading the post, I tried to implement similar functionality in [Go](https
 - [View (Returning different size tensor with the same underlying slice)](#viewing-the-tensor-with-different-sizes)
 - [DimSlice (hardest: Getting the slice of arbitrary dimension `a[:, :, 2, :]`)](#slicing-the-tensor-along-certain-dimension)
 
+*Full implementation code and tests can be found [this repository](https://github.com/gladuz/deep-learning-go/tree/main/tensor).*
 # Tensor struct
 Basic Tensor in Pytorch has the `data` in one dimensional continous array, and `sizes, strides, offset` for getting the multi-dimensional view of the Tensor.
 For detailed explanation, please refer to [PyTorch internals](http://blog.ezyang.com/2019/05/pytorch-internals/).
