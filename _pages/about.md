@@ -17,6 +17,6 @@ social: true  # includes social icons at the bottom of the page
 I am currently a PhD student at [Kyungpook National University](https://en.knu.ac.kr) advised by [Dr. Jae-Mo Kang](https://sites.google.com/site/knuaislab/professor) [Computer Vision & Learning Theory LAB](https://sites.google.com/view/jmkang)
 <br><br>
 
-My primary research interests are deep learning, federated learning and computer vision. My current research work focuses on federated learning and its application in wireless IoT settings.
+Research interests: 🤖 Multi-objective deep learning, 📚 Continous learning with domain adaptation, 💡 Effective domain-aware finetuning, 🖧 Federated learning.
 <br><br>
 I graduated from [Kyungpook National University](https://en.knu.ac.kr) with a Master's in Artificial Intelligence. My thesis was was on Hierarchical Federated Learning in IoT networks.
