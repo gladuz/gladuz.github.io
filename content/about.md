@@ -30,5 +30,8 @@ I graduated from Kyungpook National University with a Master’s in Artificial I
 Email me: jamshid_at_tursunboev_dot_com
 
 ## Publications
+**Tursunboev, Jamshid**, Vikas Palakonda, and Jae-Mo Kang. *"Multi-Objective Evolutionary Hybrid Deep Learning for energy theft detection."* Applied Energy 363 (2024): 122847. (JCR IF Top 10%) 
+
 **Tursunboev, Jamshid**, Yong-Sung Kang, Sung-Bum Huh, Dong-Woo Lim, Jae-Mo Kang, and Heechul Jung. *"Hierarchical federated learning for edge-aided unmanned aerial vehicle networks."* Applied Sciences 12, no. 2 (2022): 670.
 
+Li, Sijia, Furkat Sultonov, **Jamshid Tursunboev**, Jun-Hyun Park, Sangseok Yun, and Jae-Mo Kang. "Ghostformer: A GhostNet-based two-stage transformer for small object detection." Sensors 22, no. 18 (2022): 6939.
