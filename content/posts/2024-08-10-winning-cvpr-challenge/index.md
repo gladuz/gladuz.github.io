@@ -5,7 +5,7 @@ tags:
   - news
 ---
 
-Hey everyone! I'm thrilled to share some exciting news – our team just won the [dense video captioning task at the SoccerNet Challenge](https://www.soccer-net.org/tasks/dense-video-captioning), part of **CVPR 2024**! 🎉⚽️🏆 For those of you who might not know, CVPR is one of the most prestigious conferences in computer vision, so this is a big deal for us. I thought I'd break down our approach and share some insights into how we tackled this challenge.
+Hey everyone! Our team just won the [dense video captioning task at the SoccerNet Challenge](https://www.soccer-net.org/tasks/dense-video-captioning), part of **CVPR 2024**! 🎉⚽️🏆 For those of you who might not know, CVPR is one of the most prestigious conferences in computer vision, so this is a big deal for us. I thought I'd break down our approach and share some insights into how we tackled this challenge.
 
 ## The Challenge: [Soccernet Dense Video Captioning](https://www.soccer-net.org/tasks/dense-video-captioning)
 
