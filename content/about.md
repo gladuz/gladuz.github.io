@@ -20,14 +20,18 @@ layout: about
 
 I am currently a PhD student at Kyungpook National University advised by Dr. Jae-Mo Kang Computer Vision & Learning Theory LAB
 
-## 🚀 Current Projects
-- 🤖 Multi-objective deep learning
-- 📚 Continous learning with domain adaptation
-- 💡 Effective domain-aware finetuning
-
-I graduated from Kyungpook National University with a Master’s in Artificial Intelligence. My thesis was was on Hierarchical Federated Learning in IoT network
+I graduated from Kyungpook National University with a Master’s in Artificial Intelligence. My thesis was was on Hierarchical Federated Learning in IoT networks.
 
 Email me: jamshid_at_tursunboev_dot_com
+
+## 📰 News
+- 🏆 We won the 1st place in the dense video captioning track of SoccerNet challenge at **CVPR 2024**! 🥇⚽️
+- We submitted a paper for AAAI 2025. Fingers crossed 🤞.
+
+## 🚀 Current research
+- 📚 Continous learning with domain adaptation
+- 💡 Effective domain-aware finetuning of VLMs
+- 🤖 Multi-objective deep learning
 
 ## Publications
 **Tursunboev, Jamshid**, Vikas Palakonda, and Jae-Mo Kang. *"Multi-Objective Evolutionary Hybrid Deep Learning for energy theft detection."* Applied Energy 363 (2024): 122847. (JCR IF Top 10%) 
